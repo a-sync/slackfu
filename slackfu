@@ -1,11 +1,15 @@
 #!/bin/bash
 
 SLACK_AUTH_TOKEN=""
+RECIPIENTS=""
+FILENAME=""
+TITLE=""
+FOOTER=""
 
 usage() { echo "Usage: $(basename "$0") [options] <file>
 
 Options:
-    -r <channel name|channel ID>
+    -r <channel names|channel IDs>
     -n <file name>
     -t <title text>
     -f <initial comment>
@@ -13,33 +17,24 @@ Options:
 
 Examples:
     $(basename "$0") somefile.jpg
-    $(basename "$0") -r general -n \"filename.log\" < somefile.txt
+    $(basename "$0") -r general -n \"filename.log\" somefile.txt
     ps | $(basename "$0") -r C8P15L0TV -t \"\$(id -un) \$(hostname -f)\"
     ls -la /etc/ | $(basename "$0") -r D024BE91L,random -f \"\$(history 1)\"
 " 1>&2; exit 1; }
 
-recipient=""
-filename=""
-title=""
-footer=""
-options=""
 while getopts ":r:n:t:f:T:" o; do
     case "${o}" in
         r)
-            recipient="${OPTARG}"
-            options="$options --form-string channels=\"\$recipient\""
+            RECIPIENTS="${OPTARG}"
             ;;
         n)
-            filename="${OPTARG}"
-            options="$options --form-string filename=\"\$filename\""
+            FILENAME="${OPTARG}"
             ;;
         t)
-            title="${OPTARG}"
-            options="$options --form-string title=\"\$title\""
+            TITLE="${OPTARG}"
             ;;
         f)
-            footer="${OPTARG}"
-            options="$options --form-string initial_comment=\"\$footer\""
+            FOOTER="${OPTARG}"
             ;;
         T)
             SLACK_AUTH_TOKEN="${OPTARG}"
@@ -55,6 +50,23 @@ shift $((OPTIND-1))
 if [[ "$SLACK_AUTH_TOKEN" == "" ]]; then
     echo "No authentication token specified. Please set SLACK_AUTH_TOKEN in $(readlink -f "$0") or use the -T option."$'\n'
     usage
+fi
+
+options=""
+if [[ ! -z "$RECIPIENTS" ]]; then
+    options="$options --form-string channels=\"\$RECIPIENTS\""
+fi
+
+if [[ ! -z "$FILENAME" ]]; then
+    options="$options --form-string filename=\"\$FILENAME\""
+fi
+
+if [[ ! -z "$TITLE" ]]; then
+    options="$options --form-string title=\"\$TITLE\""
+fi
+
+if [[ ! -z "$FOOTER" ]]; then
+    options="$options --form-string initial_comment=\"\$FOOTER\""
 fi
 
 filepath=$*
@@ -73,4 +85,4 @@ else
     payload="-F file=@\"\$filepath\""
 fi
 
-eval "curl -s $payload$options --form-string token=\"\$SLACK_AUTH_TOKEN\" --form-string pretty=true https://slack.com/api/files.upload 2>&1" 
+eval "curl -s -S $payload$options --form-string token=\"\$SLACK_AUTH_TOKEN\" --form-string pretty=true https://slack.com/api/files.upload 2>&1" 

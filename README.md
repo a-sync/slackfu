@@ -21,7 +21,7 @@ sudo ln -s "$(readlink -f slackfu)" /usr/local/bin
 Usage: slackfu [options] <file>
 
 Options:
-    -r <channel name|channel ID>
+    -r <channel names|channel IDs>
     -n <file name>
     -t <title text>
     -f <initial comment>
@@ -29,7 +29,7 @@ Options:
 
 Examples:
     slackfu somefile.jpg
-    slackfu -r general -n "filename.log" < somefile.txt
+    slackfu -r general -n "filename.log" somefile.txt
     ps | slackfu -r C8P15L0TV -t "$(id -un) $(hostname -f)"
     ls -la /etc/ | slackfu -r D024BE91L,random -f "$(history 1)"
 ```
