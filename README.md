@@ -7,7 +7,7 @@
 ## Installation
  1. download and unpack the [archive](https://github.com/a-sync/slackfu/archive/master.tar.gz)
  2. enter the unpacked directory and make [slackfu](slackfu) executable
- 3. set [your authentication token](https://api.slack.com/custom-integrations/legacy-tokens/) in the SLACK_AUTH_TOKEN variable of [slackfu](slackfu#L3)
+ 3. set [your authentication token](https://github.com/a-sync/slackfu/wiki#slack-api-tokens) in the SLACK_AUTH_TOKEN variable of [slackfu](slackfu#L3)
  4. create a global symbolic link
 ```bash
 curl -sL https://github.com/a-sync/slackfu/archive/master.tar.gz | tar xz
